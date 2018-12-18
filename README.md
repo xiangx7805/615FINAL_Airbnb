@@ -9,3 +9,6 @@ There are three part for my Final report.
 3. Topic Model.  
    It is like an app and can be opened by browser, too.
    
+I would like to express my deepest appreciation to all those who offered me help and suggestion to complete this app. 
+
+A special gratitude I give to our dear professor, [Haviland Wright](https://github.com/havilandw).
