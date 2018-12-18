@@ -1,0 +1,27 @@
+---
+title: "Topic model"
+author: "Xiang XU"
+date: "December 18, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(LDAvis,servr)
+```
+
+```{r}
+load("data/VisitNotes.Rdata")
+
+# create the JSON object to feed the visualization:
+json <- createJSON(phi = VisitNotes$phi, 
+                   theta = VisitNotes$theta, 
+                   doc.length = VisitNotes$doc.length, 
+                   vocab = VisitNotes$vocab, 
+                   term.frequency = VisitNotes$term.frequency)
+
+
+serVis(json, out.dir = 'vis', open.browser = TRUE)
+```
+
+This is a model top app. Please explore the Viewer and have FUN !
