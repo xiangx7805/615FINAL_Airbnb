@@ -131,8 +131,40 @@ ui <- dashboardPage(
                           fluidRow(
                             box(solidHeader = TRUE, status = "danger"
                                 , DT::dataTableOutput("table2"), width = 12, height = 450)
-                          ))
-          ))),
+                          ))))),
+      
+      
+      # tabItem(
+      #   tabName = "map",
+      #   fluidRow(
+      #     tabBox(width = 9,
+      #            title = h3("Airbnb MAP"),id = "MAP",
+      #            # The id lets us use input$tabset1 on the server to find the current tab
+      #            tabPanel(h4("Leaflet"),
+      #                     fluidRow(
+      #                       fluidRow(
+      #                         
+      #                         column(width = 12,
+      #                                box(title = "Aribnb Global location",width = NULL,
+      #                                    solidHeader = TRUE, status = "danger",
+      #                                    leafletOutput("globalmap", height = 500),
+      #                                    h4("There are too many records even for one city, like boston has 25513 obs. I tried to use leaflet to plot these Airbnb location in Boston. But R just broke. So I simplified the leaflet to the global data.")
+      #                                    # selectInput("select1",h4("Select a City:"), choices = unique(Airbnb$City),
+      #                                    #             selected = "boston"),
+      #                                    # box(tableOutput("kable"))
+      #                                )
+      #                         )
+      #                       )
+      #                       
+      #                     )
+      #                     )
+      #            ),
+      #            tabPanel(h4("Variable Description"),
+      #                     fluidRow(
+      #                       box(solidHeader = TRUE, status = "danger"
+      #                           , DT::dataTableOutput("table2"), width = 12, height = 450)
+      #                     ))))),
+      
       
       tabItem(
         tabName = "map",
@@ -152,20 +184,7 @@ ui <- dashboardPage(
         )
       ),
       
-      # tabItem(
-      #   tabName = "ld",
-      #   
-      #   fluidRow(
-      #     
-      #     column(width = 12,
-      #            box(title = "Location Distribution for Mass Shooting in USA",width = NULL,
-      #                solidHeader = TRUE, status = "danger",
-      #                plotlyOutput("locationmap", height = 600)
-      #                )
-      #            )
-      #     )
-      #   ),
-      
+
       tabItem(
         tabName = "price",
         
@@ -340,34 +359,19 @@ server <- function(input, output) {
      map <-  leaflet(data = Airbnb3) %>%
         addTiles() %>%
         addMarkers(~longitude, ~latitude, icon = Icon,label = ~as.character(City))
-      
-    # #bins
-    # pal <- colorQuantile("YlOrRd", domain = MSD_state$Sum.Victims)
-    #pal(states$Donations)
-    # m_victims <- m %>% addPolygons(
-    #   fillColor = ~pal(data$Sum.Victims),
-    #   weight = 2,
-    #   opacity = 1,
-    #   color = "white",
-    #   dashArray = "3",
-    #   fillOpacity = 0.7,
-    #   highlight = highlightOptions(
-    #     weight = 5,
-    #     color = "#666",
-    #     dashArray = "",
-    #     fillOpacity = 0.7,
-    #     bringToFront = TRUE),
-    #   label = labels,
-    #   labelOptions = labelOptions(
-    #     style = list("font-weight" = "normal", padding = "3px 8px"),
-    #     textsize = "15px",
-    #     direction = "auto")
-    # ) %>%
-    #   addLegend(pal = pal, values = ~Sum.Victims, opacity = 0.7, title = "Quantile in Total Number of Victims",
-    #             position = "bottomright")
     map
   })
   
+  output$ggmap <- renderPlot({
+    load(file = "data/Citydata.Rdata")
+    mp <- NULL
+    mapWorld <- borders("world", colour="slategray3", fill="slategray3") # create a layer of borders
+    mp <- ggplot() +   mapWorld
+    
+    #Now Layer the cities on top
+    mp <- mp+ geom_point(aes(x=Citydata$lon, y=Citydata$lat) ,color="goldenrod", size=3) 
+    mp
+  })
   
   
   output$table<- DT::renderDataTable({
