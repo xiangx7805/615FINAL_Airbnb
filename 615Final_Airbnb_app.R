@@ -22,6 +22,7 @@ Airbnb <- get(load("data/Airbnb.Rdata"))
 Airbnb2 <- get(load("data/Airbnb2.Rdata"))
 Airbnb3 <- get(load("data/Airbnb3.Rdata"))
 Airbnb_descrip <- readxl::read_xlsx("./data/DataDescription.xlsx")
+reviews_sentiment <- get(load("data/reviews_sentiment.Rdata"))
 # Airbnb <- get(load("./data/Airbnb2.Rdata"));rm(Airbnb.nona)
 # Reviews <- read_csv("./data/reviews.csv")
 
@@ -63,13 +64,13 @@ ui <- dashboardPage(
                      menuItem(h4("Text Analysis"), tabName = "tm", icon = icon("font"),
                               menuItem(h4("Word Cloud"),
                                        tabName = "wc"
+                              ),
+                              menuItem(h4("Sentiment Analysis"),
+                                       tabName = "sentiment"
                               )#,
-                              # menuItem(h4("Sentiment Analysis"),
-                              #          tabName = "sentiment"
-                              # )#,
-                              # menuItem(h4("Topic Modeling"),
-                              #          tabName = "tom"
-                              # )
+                              #menuItem(h4("Topic Modeling"),
+                              #         tabName = "topic"
+                              #)
                     ),
                      menuItem(h4("About"), tabName = "about", icon = icon("question-circle"))
                    )
@@ -95,7 +96,7 @@ ui <- dashboardPage(
                      h4("  3) Exploration"),
                      h4("  4) Benford Law Test"),
                      h4("  5) Text Anaysis")),
-                     h5("NOTE: For the large dataset, it may take a while for the app to run and show all graphs."),
+                    # h5("NOTE: For the large dataset, it may take a while for the app to run and show all graphs."),
                  fluidRow(
                    infoBoxOutput("name"),
                    div(style="display: inline-block",
@@ -170,7 +171,7 @@ ui <- dashboardPage(
         
         fluidRow(
           column(width = 12,
-                 h5("It may take a while to show the graph"),
+                 h5("It may take a while..."),
                  box(plotOutput("price1"), solidHeader = TRUE, status = "danger"),
                  h4("we can see lots of extreme values exist, what will happen we delete these outliers?"),
                  box(plotOutput("price2"), solidHeader = TRUE, status = "danger")
@@ -185,7 +186,7 @@ ui <- dashboardPage(
           # )
         ),
         column(width = 12,
-               h5("It may take a while to show the graph"),
+               h5("It may take a while..."),
                box(plotOutput("price3"), solidHeader = TRUE, status = "danger"),
                h4("we can see lots of extreme values exist, what will happen we delete these outliers?"),
                box(plotOutput("price4"), solidHeader = TRUE, status = "danger")    
@@ -218,12 +219,12 @@ ui <- dashboardPage(
         tabName = "bf",
         fluidRow(
           box(width =6, height=700,title="Benford Analysis for Price Range",
-             h5("It may take a while to show the graph"),
+             #h5("It may take a while..."),
               plotOutput("benf1"), solidHeader = TRUE, status = "danger",
               h4("From Benford Analysis plots, we can see that airbnb price range for the airbnb house/apartment doesn't follow Benford Distribution and the difference is large.")
           ),
           box(width =6, height=700,title="Benford Analysis for Reviews",
-             # h5("It may take a while to show the graph"),
+             # h5("It may take a while..."),
               plotOutput("benf2"), solidHeader = TRUE, status = "danger",
               h4("From Benford Analysis plots, we can see that total number of reviews for each airbnb house/apartment doesn't follow Benford Distribution. It seems there may be some fraud in reviews, aka some host may buy reviews to make their house more attractive.")
           ))
@@ -248,7 +249,7 @@ ui <- dashboardPage(
           column(12,
                  box(title="Word Cloud for Trigram Reviews",
                      solidHeader = TRUE, status = "danger",
-                    # h5("It may take a while to show the graph"),
+                     h5("It may take a while..."),
                      wordcloud2Output("wc_tr", width = "100%", height = "600px"))
                  )
                  # sliderInput("slider8", h4("Word Frequency"),
@@ -261,17 +262,30 @@ ui <- dashboardPage(
           column(12,
                  box(title="Timeline Sentiment analysis for Reviews",
                      solidHeader = TRUE, status = "danger",
-                     h5("It may take a while to show the graph..."),
-                     wordcloud2Output("SentimentAnalysis", width = "100%", height = "600px"))
+                     #h5("It may take a while......"),
+                     #src="https://github.com/xiangx7805/615FINAL_Airbnb/blob/master/data/IMAGE01.PNG"#,
+                     div(style="display: inline-block",
+                         img(src="https://raw.githubusercontent.com/xiangx7805/615FINAL_Airbnb/master/data/IMAGE01.PNG", 
+                             height=300, width=500 )
+                     )
+                     #wordcloud2Output("SentimentAnalysis", width = "100%", height = "600px")
+                     )
           )
           )
         ), 
       
-      tabItem(#for topic modeling
-        tabName = "tom",
-        fluidRow(
-          )
-        ), 
+      # tabItem(#for topic modeling
+      #   tabName = "topic",
+      #   fluidRow(
+      #     column(12,
+      #            box(
+      #              title="Topic modleing for Reviews",
+      #              solidHeader = TRUE, status = "danger",
+      #              h5("It may take a while......"),
+      #              wordcloud2Output("TopicModel", width = "100%", height = "600px"))
+      #            )
+      #     )
+      #   ), 
       # 
       # tabItem(
       #   tabName = "tm",
@@ -460,43 +474,66 @@ server <- function(input, output) {
   
   
   output$SentimentAnalysis <- renderImage({
-    # A temp file to save the output. It will be deleted after renderImage
-    # sends it, because deleteFile=TRUE.
-    outfile <- tempfile(fileext='data/IMAGE01.PNG')
+   # img(src = 'data/IMAGE01.PNG', height = '400px', width = '300px')
     
-    # Generate a png
-    png(outfile, width=400, height=400)
     
-    dev.off()
+    list(
+
+      src = "data/IMAGE01.PNG",
+
+      contentType = "image/png",
+
+      alt = "precessing..."
+
+    )
+  })
     
-    # Return a list
-    list(src = outfile,
-         alt = "Processing...")
-  }, deleteFile = TRUE)
-    
- #    renderImage({
- # #   png(filename = "data/IMAGE01.PNG", width = 400,height = 300)
- #    load("data/reviews_sentiment.Rdata")
- # 
- #    p1 <-  ggplot(na.omit(Reviews_sentiment), aes(x = as.factor(lubridate::year(date)), y = SentimentScore,
- #                                        color = as.factor(lubridate::year(date)))) +
- #      geom_point(alpha = .3)+
- #      geom_boxplot()+
- #      theme(legend.position = "none")+
- #      xlab("Year") + ylab("Sentiment Score") +
- #      ggtitle("Plot of Sentiment Over Time - Boxplot","2009 - 2018")
- #   p1
- # 
- #   # p2 <-  ggplot(na.omit(Reviews_sentiment), aes(x = lubridate::year(date), y = SentimentScore) )+
- #   #    geom_point(alpha = .3, color =  "grey")+
- #   #    geom_smooth(method = 'gam') +
- #   #    theme(legend.position = "none")+
- #   #    xlab("Year") + ylab("Sentiment Score") +
- #   #    ggtitle("Plot of Sentiment Over Time - trend","2009 - 2018")
- # 
- #  #  gridExtra::grid.arrange(p1, p2, ncol =2)
- #  })
+   #  renderPlot({
+   # 
+   #  load("data/reviews_sentiment.Rdata")
+   # 
+   #  p1 <-  ggplot(na.omit(Reviews_sentiment), aes(x = as.factor(lubridate::year(date)), y = SentimentScore,
+   #                                      color = as.factor(lubridate::year(date)))) +
+   #    geom_point(alpha = .3)+
+   #    geom_boxplot()+
+   #    theme(legend.position = "none")+
+   #    xlab("Year") + ylab("Sentiment Score") +
+   #    ggtitle("Plot of Sentiment Over Time - Boxplot","2009 - 2018")
+   # p1
+
+   # p2 <-  ggplot(na.omit(Reviews_sentiment), aes(x = lubridate::year(date), y = SentimentScore) )+
+   #    geom_point(alpha = .3, color =  "grey")+
+   #    geom_smooth(method = 'gam') +
+   #    theme(legend.position = "none")+
+   #    xlab("Year") + ylab("Sentiment Score") +
+   #    ggtitle("Plot of Sentiment Over Time - trend","2009 - 2018")
+
+  #  gridExtra::grid.arrange(p1, p2, ncol =2)
+  #})
   ###########################################################    AIRBNB END
+  
+  output$TopicModel<- renderPlot({
+    p1 <-  ggplot(na.omit(Reviews_sentiment), aes(x = as.factor(lubridate::year(date)), y = SentimentScore,
+                                                  color = as.factor(lubridate::year(date)))) +
+      geom_point(alpha = .3)+
+      geom_boxplot()+
+      theme(legend.position = "none")+
+      xlab("Year") + ylab("Sentiment Score") +
+      ggtitle("Plot of Sentiment Over Time - Boxplot","2009 - 2018")
+
+    p2 <-  ggplot(na.omit(Reviews_sentiment), aes(x = lubridate::year(date), y = SentimentScore) )+
+        geom_point(alpha = .3, color =  "grey")+
+        geom_smooth(method = 'gam') +
+        theme(legend.position = "none")+
+        xlab("Year") + ylab("Sentiment Score") +
+        ggtitle("Plot of Sentiment Over Time - trend","2009 - 2018")
+
+      gridExtra::grid.arrange(p1, p2, ncol =2)
+  })
+  
+  
+  
+  
   
 }
 
