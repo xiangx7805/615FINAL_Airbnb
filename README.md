@@ -1,6 +1,8 @@
 # 615FINAL_Airbnb
 
-There are three part for my Final report.
+##Please wait for a while until all the graphs show~
+
+There are three part for my [Final report](https://drive.google.com/open?id=1i2hJfhXJVr-c2fOXAojArfRZB6VK4g0L).
 1. the Shiny app  
    I have problem publishing the app. But it works well in the repository.
    And for the large dataset, it may take a while to show all graphs.
