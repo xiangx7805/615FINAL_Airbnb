@@ -1,6 +1,9 @@
 # 615FINAL_Airbnb
 
-##Please wait for a while until all the graphs show~
+*The new add part:*
+*Please wait for a while until all the graphs show~*
+*the report is too large to push to the github, please see the link!*
+*--*
 
 There are three part for my [Final report](https://drive.google.com/open?id=1i2hJfhXJVr-c2fOXAojArfRZB6VK4g0L).
 1. the Shiny app  
